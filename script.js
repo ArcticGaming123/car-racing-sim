@@ -14,9 +14,12 @@ function startRace() {
         return;
     }
 
-    const names = input.split("\n").map(name => name.trim()).filter(name => name !== "");
+    const names = input
+        .split("\n")
+        .map(name => name.trim())
+        .filter(name => name !== "");
 
-    const trackWidth = raceTrack.clientWidth - 80;
+    const trackWidth = raceTrack.clientWidth - 100;
     const cars = [];
 
     names.forEach((name, index) => {
@@ -25,8 +28,30 @@ function startRace() {
 
         const car = document.createElement("div");
         car.classList.add("car");
-        car.innerText = name;
-        car.style.backgroundColor = getRandomColor();
+
+        const carBody = document.createElement("div");
+        carBody.classList.add("car-body");
+        carBody.style.backgroundColor = getRandomColor();
+
+        const windshield = document.createElement("div");
+        windshield.classList.add("windshield");
+
+        const wheelFront = document.createElement("div");
+        wheelFront.classList.add("wheel", "front");
+
+        const wheelBack = document.createElement("div");
+        wheelBack.classList.add("wheel", "back");
+
+        const nameLabel = document.createElement("div");
+        nameLabel.classList.add("car-name");
+        nameLabel.innerText = name;
+
+        carBody.appendChild(windshield);
+        carBody.appendChild(wheelFront);
+        carBody.appendChild(wheelBack);
+
+        car.appendChild(nameLabel);
+        car.appendChild(carBody);
 
         lane.appendChild(car);
         raceTrack.appendChild(lane);
@@ -53,5 +78,5 @@ function startRace() {
 }
 
 function getRandomColor() {
-    return "#" + Math.floor(Math.random()*16777215).toString(16);
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
 }
