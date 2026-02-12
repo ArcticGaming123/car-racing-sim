@@ -19,11 +19,13 @@ function startRace() {
         .map(name => name.trim())
         .filter(name => name !== "");
 
-    const trackWidth = raceTrack.clientWidth - 100;
+    const trackWidth = raceTrack.clientWidth - 120;
     const cars = [];
-    let winnerDeclared = false;
+    const results = [];
+    let finishedCars = 0;
 
     names.forEach((name) => {
+
         const lane = document.createElement("div");
         lane.classList.add("lane");
 
@@ -61,7 +63,8 @@ function startRace() {
             element: car,
             name: name,
             position: 0,
-            speed: Math.random() * 2 + 2 // starting speed
+            speed: Math.random() * 2 + 2,
+            finished: false
         });
     });
 
@@ -69,26 +72,51 @@ function startRace() {
 
         cars.forEach(car => {
 
-            // Random acceleration or deceleration
+            if (car.finished) return;
+
+            // Random speed change
             let randomChange = (Math.random() - 0.5) * 0.5;
             car.speed += randomChange;
 
-            // Clamp speed so it doesn't go crazy
             if (car.speed < 1) car.speed = 1;
             if (car.speed > 6) car.speed = 6;
 
             car.position += car.speed;
             car.element.style.left = car.position + "px";
 
-            if (!winnerDeclared && car.position >= trackWidth) {
-                winnerDeclared = true;
-                clearInterval(raceInterval);
-                winnerDisplay.innerHTML = `🏆 Winner: ${car.name}!`;
+            if (car.position >= trackWidth) {
+                car.finished = true;
+                finishedCars++;
+                results.push(car.name);
             }
 
         });
 
+        if (finishedCars === cars.length) {
+            clearInterval(raceInterval);
+            showResults(results);
+        }
+
     }, 20);
+}
+
+function showResults(results) {
+
+    raceTrack.innerHTML = "";
+
+    const resultsScreen = document.createElement("div");
+    resultsScreen.style.marginTop = "30px";
+    resultsScreen.innerHTML = "<h2>🏁 Race Results</h2>";
+
+    results.forEach((name, index) => {
+        const place = document.createElement("div");
+        place.style.fontSize = "20px";
+        place.style.margin = "10px";
+        place.innerText = `${index + 1}. ${name}`;
+        resultsScreen.appendChild(place);
+    });
+
+    raceTrack.appendChild(resultsScreen);
 }
 
 function getRandomColor() {
