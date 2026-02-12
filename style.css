@@ -20,6 +20,7 @@ textarea {
     height: 120px;
     padding: 10px;
     font-size: 14px;
+    resize: none;
 }
 
 button {
@@ -27,30 +28,44 @@ button {
     font-size: 16px;
     cursor: pointer;
     margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #00bcd4;
+    color: black;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #00e5ff;
 }
 
 #raceTrack {
     margin-top: 30px;
     position: relative;
     width: 90%;
-    height: 400px;
+    min-height: 400px;
     margin-left: auto;
     margin-right: auto;
     border: 3px solid white;
     background: #444;
     overflow: hidden;
+    padding-left: 160px; /* Space for names on left */
 }
 
+/* Lane */
 .lane {
     position: relative;
-    height: 60px;
+    height: 70px;
     border-bottom: 1px dashed #777;
+    display: flex;
+    align-items: center;
 }
 
+/* Car Container */
 .car {
     position: absolute;
     left: 0;
-    top: 15px;
     width: 80px;
     height: 30px;
 }
@@ -92,16 +107,18 @@ button {
     left: 5px;
 }
 
-/* Name Label */
+/* Name Label (LEFT of track) */
 .car-name {
     position: absolute;
-    top: -25px;
-    width: 100%;
-    font-size: 12px;
+    left: -150px;
+    width: 140px;
+    text-align: right;
+    font-size: 14px;
     color: white;
-    text-align: center;
+    font-weight: bold;
 }
 
+/* Winner / Results */
 #winnerDisplay {
     margin-top: 20px;
     font-size: 24px;
