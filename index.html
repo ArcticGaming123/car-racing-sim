@@ -10,7 +10,19 @@
     <h1>🏁 Car Racing Simulator</h1>
 
     <div class="setup">
-        <textarea id="nameInput" placeholder="Enter one racer name per line..."></textarea>
+        <label for="modeSelect">Select Mode:</label>
+        <select id="modeSelect">
+            <option value="quick">Quick Race</option>
+            <option value="season">Competitive Season</option>
+        </select>
+
+        <textarea id="nameInput" placeholder="Enter one racer name per line (max 10)"></textarea>
+
+        <div id="raceCountContainer" style="display:none;">
+            <label for="raceCount">Number of Races (3–10):</label>
+            <input type="number" id="raceCount" min="3" max="10" value="5">
+        </div>
+
         <button id="startRace">Start Race</button>
     </div>
 
@@ -21,4 +33,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-Add index.html
