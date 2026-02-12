@@ -23,6 +23,12 @@ textarea {
     resize: none;
 }
 
+input[type="number"], select {
+    padding: 5px;
+    font-size: 14px;
+    margin: 5px;
+}
+
 button {
     padding: 10px 20px;
     font-size: 16px;
@@ -50,7 +56,7 @@ button:hover {
     border: 3px solid white;
     background: #444;
     overflow: hidden;
-    padding-left: 160px; /* Space for names on left */
+    padding-left: 160px; /* space for names */
 }
 
 /* Lane */
@@ -107,7 +113,7 @@ button:hover {
     left: 5px;
 }
 
-/* Name Label (LEFT of track) */
+/* Name Label */
 .car-name {
     position: absolute;
     left: -150px;
@@ -123,4 +129,17 @@ button:hover {
     margin-top: 20px;
     font-size: 24px;
     font-weight: bold;
+}
+
+.resultsScreen {
+    margin-top: 30px;
+}
+
+.resultsScreen h2 {
+    margin-bottom: 15px;
+}
+
+.resultsScreen div {
+    font-size: 20px;
+    margin: 5px 0;
 }
