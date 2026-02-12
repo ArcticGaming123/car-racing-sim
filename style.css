@@ -37,28 +37,69 @@ button {
     margin-left: auto;
     margin-right: auto;
     border: 3px solid white;
-    background: #333;
+    background: #444;
     overflow: hidden;
 }
 
 .lane {
     position: relative;
-    height: 50px;
-    border-bottom: 1px solid #555;
+    height: 60px;
+    border-bottom: 1px dashed #777;
 }
 
 .car {
     position: absolute;
     left: 0;
-    top: 10px;
+    top: 15px;
+    width: 80px;
     height: 30px;
-    width: 60px;
+}
+
+/* Car Body */
+.car-body {
+    width: 80px;
+    height: 20px;
     border-radius: 5px;
-    text-align: center;
-    line-height: 30px;
+    position: relative;
+}
+
+/* Windshield */
+.windshield {
+    width: 30px;
+    height: 15px;
+    background: rgba(255,255,255,0.7);
+    position: absolute;
+    top: -10px;
+    left: 25px;
+    border-radius: 3px;
+}
+
+/* Wheels */
+.wheel {
+    width: 15px;
+    height: 15px;
+    background: black;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -8px;
+}
+
+.wheel.front {
+    right: 5px;
+}
+
+.wheel.back {
+    left: 5px;
+}
+
+/* Name Label */
+.car-name {
+    position: absolute;
+    top: -25px;
+    width: 100%;
     font-size: 12px;
-    color: black;
-    font-weight: bold;
+    color: white;
+    text-align: center;
 }
 
 #winnerDisplay {
