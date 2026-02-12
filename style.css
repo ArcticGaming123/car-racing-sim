@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #1e1e1e;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.setup {
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 300px;
+    height: 120px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#raceTrack {
+    margin-top: 30px;
+    position: relative;
+    width: 90%;
+    height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 3px solid white;
+    background: #333;
+    overflow: hidden;
+}
+
+.lane {
+    position: relative;
+    height: 50px;
+    border-bottom: 1px solid #555;
+}
+
+.car {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    height: 30px;
+    width: 60px;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+}
+
+#winnerDisplay {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
