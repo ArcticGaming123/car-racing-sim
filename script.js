@@ -21,8 +21,9 @@ function startRace() {
 
     const trackWidth = raceTrack.clientWidth - 100;
     const cars = [];
+    let winnerDeclared = false;
 
-    names.forEach((name, index) => {
+    names.forEach((name) => {
         const lane = document.createElement("div");
         lane.classList.add("lane");
 
@@ -60,20 +61,33 @@ function startRace() {
             element: car,
             name: name,
             position: 0,
-            speed: Math.random() * 3 + 2
+            speed: Math.random() * 2 + 2 // starting speed
         });
     });
 
     let raceInterval = setInterval(() => {
+
         cars.forEach(car => {
+
+            // Random acceleration or deceleration
+            let randomChange = (Math.random() - 0.5) * 0.5;
+            car.speed += randomChange;
+
+            // Clamp speed so it doesn't go crazy
+            if (car.speed < 1) car.speed = 1;
+            if (car.speed > 6) car.speed = 6;
+
             car.position += car.speed;
             car.element.style.left = car.position + "px";
 
-            if (car.position >= trackWidth) {
+            if (!winnerDeclared && car.position >= trackWidth) {
+                winnerDeclared = true;
                 clearInterval(raceInterval);
                 winnerDisplay.innerHTML = `🏆 Winner: ${car.name}!`;
             }
+
         });
+
     }, 20);
 }
 
