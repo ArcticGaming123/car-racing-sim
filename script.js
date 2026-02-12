@@ -5,16 +5,12 @@ const modeSelect = document.getElementById("modeSelect");
 const raceCountContainer = document.getElementById("raceCountContainer");
 
 modeSelect.addEventListener("change", () => {
-    if (modeSelect.value === "season") {
-        raceCountContainer.style.display = "block";
-    } else {
-        raceCountContainer.style.display = "none";
-    }
+    raceCountContainer.style.display = modeSelect.value === "season" ? "block" : "none";
 });
 
 startButton.addEventListener("click", startRace);
 
-let championshipData = null; // Persistent for Competitive Season
+let championshipData = null;
 
 function startRace() {
     raceTrack.innerHTML = "";
@@ -27,19 +23,14 @@ function startRace() {
     }
 
     let names = input.split("\n").map(n => n.trim()).filter(n => n !== "");
-    if (names.length > 10) {
-        alert("Maximum 10 racers allowed!");
-        return;
-    }
+    if (names.length > 10) { alert("Max 10 racers!"); return; }
 
     const mode = modeSelect.value;
-
-    if (mode === "quick") {
-        startQuickRace(names);
-    } else if (mode === "season") {
+    if (mode === "quick") startQuickRace(names);
+    else {
         let raceCount = parseInt(document.getElementById("raceCount").value);
         if (isNaN(raceCount) || raceCount < 3 || raceCount > 10) {
-            alert("Please choose 3–10 races!");
+            alert("Choose 3–10 races!");
             return;
         }
         startCompetitiveSeason(names, raceCount);
@@ -54,8 +45,8 @@ function startQuickRace(names) {
 // ---------------- Competitive Season ----------------
 function startCompetitiveSeason(names, totalRaces) {
     championshipData = {
-        names: names,
-        totalRaces: totalRaces,
+        names,
+        totalRaces,
         currentRace: 1,
         points: names.reduce((acc, name) => { acc[name] = 0; return acc; }, {})
     };
@@ -67,8 +58,14 @@ function runNextSeasonRace() {
     race(championshipData.names, true);
 }
 
+// ---------------- Race Function ----------------
 function race(names, isSeason) {
     raceTrack.innerHTML = "";
+
+    // Add finish line
+    const finish = document.createElement("div");
+    finish.classList.add("finishLine");
+    raceTrack.appendChild(finish);
 
     const trackWidth = raceTrack.clientWidth - 120;
     const cars = [];
@@ -105,13 +102,12 @@ function race(names, isSeason) {
 
         car.appendChild(nameLabel);
         car.appendChild(carBody);
-
         lane.appendChild(car);
         raceTrack.appendChild(lane);
 
         cars.push({
             element: car,
-            name: name,
+            name,
             position: 0,
             speed: Math.random() * 2 + 2,
             finished: false
@@ -122,13 +118,13 @@ function race(names, isSeason) {
         cars.forEach(car => {
             if (car.finished) return;
 
-            let randomChange = (Math.random() - 0.5) * 0.5;
-            car.speed += randomChange;
-            if (car.speed < 1) car.speed = 1;
-            if (car.speed > 6) car.speed = 6;
+            // Speed variation
+            car.speed += (Math.random() - 0.5) * 0.5;
+            car.speed = Math.min(Math.max(car.speed, 1), 6);
 
             car.position += car.speed;
             car.element.style.left = car.position + "px";
+            car.element.style.transform = `rotate(${car.speed * 2}deg)`; // slight tilt
 
             if (!car.finished && car.position >= trackWidth) {
                 car.finished = true;
@@ -140,27 +136,19 @@ function race(names, isSeason) {
         if (finishedCars === cars.length) {
             clearInterval(raceInterval);
 
-            if (!isSeason) {
-                showResults(results);
-            } else {
-                // Assign points
+            if (!isSeason) showResults(results);
+            else {
                 results.forEach((name, index) => {
-                    let pts = 0;
-                    if (index === 0) pts = 10;
-                    else if (index === 1) pts = 7;
-                    else if (index === 2) pts = 5;
-                    else pts = 3;
+                    const pts = index === 0 ? 10 : index === 1 ? 7 : index === 2 ? 5 : 3;
                     championshipData.points[name] += pts;
                 });
-
-                // Show race results briefly
                 showRaceResults(results);
             }
         }
     }, 20);
 }
 
-// ---------------- Show Quick Race Results ----------------
+// ---------------- Quick Race Results ----------------
 function showResults(results) {
     raceTrack.innerHTML = "";
     const resultsScreen = document.createElement("div");
@@ -173,10 +161,15 @@ function showResults(results) {
         resultsScreen.appendChild(place);
     });
 
+    const restartBtn = document.createElement("button");
+    restartBtn.innerText = "Restart";
+    restartBtn.onclick = () => location.reload();
+    resultsScreen.appendChild(restartBtn);
+
     raceTrack.appendChild(resultsScreen);
 }
 
-// ---------------- Show Race Results During Season ----------------
+// ---------------- Season Race Results ----------------
 function showRaceResults(results) {
     raceTrack.innerHTML = "";
     const resultsScreen = document.createElement("div");
@@ -184,8 +177,9 @@ function showRaceResults(results) {
     resultsScreen.innerHTML = `<h2>🏁 Race ${championshipData.currentRace} Results</h2>`;
 
     results.forEach((name, index) => {
+        const pts = index === 0 ? 10 : index === 1 ? 7 : index === 2 ? 5 : 3;
         const place = document.createElement("div");
-        place.innerText = `${index + 1}. ${name} (+${index <= 2 ? [10,7,5][index]:3} pts)`;
+        place.innerText = `${index + 1}. ${name} (+${pts} pts)`;
         resultsScreen.appendChild(place);
     });
 
@@ -195,27 +189,23 @@ function showRaceResults(results) {
     const sorted = Object.entries(championshipData.points).sort((a,b) => b[1]-a[1]);
     sorted.forEach(([name, pts], idx) => {
         const entry = document.createElement("div");
-        entry.innerText = `${idx+1}. ${name} - ${pts} pts`;
+        entry.innerText = `${idx + 1}. ${name} - ${pts} pts`;
         leaderboard.appendChild(entry);
     });
-
     resultsScreen.appendChild(leaderboard);
     raceTrack.appendChild(resultsScreen);
 
-    // Wait 3 seconds then move to next race / final screen
     setTimeout(() => {
         championshipData.currentRace++;
-        if (championshipData.currentRace > championshipData.totalRaces) {
-            showChampion();
-        } else {
-            runNextSeasonRace();
-        }
+        if (championshipData.currentRace > championshipData.totalRaces) showChampion();
+        else runNextSeasonRace();
     }, 3000);
 }
 
-// ---------------- Show Champion ----------------
+// ---------------- Champion Screen with Confetti ----------------
 function showChampion() {
     raceTrack.innerHTML = "";
+
     const resultsScreen = document.createElement("div");
     resultsScreen.classList.add("resultsScreen");
     resultsScreen.innerHTML = "<h2>🏆 Championship Complete!</h2>";
@@ -223,15 +213,66 @@ function showChampion() {
     const sorted = Object.entries(championshipData.points).sort((a,b) => b[1]-a[1]);
     sorted.forEach(([name, pts], idx) => {
         const entry = document.createElement("div");
-        entry.innerText = `${idx+1}. ${name} - ${pts} pts`;
+        entry.innerText = `${idx + 1}. ${name} - ${pts} pts`;
         if (idx === 0) entry.style.fontWeight = "bold";
         resultsScreen.appendChild(entry);
     });
 
+    // Add restart button
+    const restartBtn = document.createElement("button");
+    restartBtn.innerText = "Restart Championship";
+    restartBtn.onclick = () => location.reload();
+    resultsScreen.appendChild(restartBtn);
+
     raceTrack.appendChild(resultsScreen);
-    championshipData = null; // Reset
+
+    // Confetti effect
+    launchConfetti();
+
+    championshipData = null;
+}
+
+// ---------------- Confetti ----------------
+function launchConfetti() {
+    const confettiContainer = document.createElement("div");
+    confettiContainer.classList.add("confetti");
+    document.body.appendChild(confettiContainer);
+
+    for(let i=0;i<150;i++){
+        const conf = document.createElement("div");
+        conf.style.position = "absolute";
+        conf.style.width = "10px";
+        conf.style.height = "10px";
+        conf.style.backgroundColor = getRandomColor();
+        conf.style.left = Math.random()*window.innerWidth+"px";
+        conf.style.top = "-10px";
+        conf.style.opacity = 0.8;
+        conf.style.transform = `rotate(${Math.random()*360}deg)`;
+        conf.style.borderRadius = "50%";
+        conf.style.animation = `fall ${2 + Math.random()*2}s linear forwards`;
+        conf.style.animationDelay = `${Math.random()*1}s`;
+        conf.style.zIndex = 9999;
+
+        conf.style.position = "absolute";
+        conf.style.pointerEvents = "none";
+        conf.style.animationName = "fall";
+        conf.style.animationDuration = `${2+Math.random()*2}s`;
+
+        confettiContainer.appendChild(conf);
+    }
+
+    setTimeout(()=>{document.body.removeChild(confettiContainer)},5000);
 }
 
 function getRandomColor() {
-    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+    return "#" + Math.floor(Math.random()*16777215).toString(16);
 }
+
+/* Confetti animation keyframes */
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes fall {
+    0% {transform: translateY(0) rotate(0deg);}
+    100% {transform: translateY(600px) rotate(360deg);}
+}`;
+document.head.appendChild(style);
